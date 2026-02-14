@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="MusicHub.API/MusicHub.API.csproj" />
+  <Project Path="MusicHub.Application/MusicHub.Application.csproj" />
+  <Project Path="MusicHub.Domain/MusicHub.Domain.csproj" />
+  <Project Path="MusicHub.Infrastructure/MusicHub.Infrastructure.csproj" />
+</Solution>
