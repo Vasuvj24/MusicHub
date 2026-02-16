@@ -7,6 +7,8 @@ using MusicHub.Infrastructure.Events;
 
 namespace MusicHub.Infrastructure.Data
 {
+    //created because of migration it doesn't know how to create event dispatcher
+
     public class AppDbContextFactory
         : IDesignTimeDbContextFactory<AppDbContext>
     {

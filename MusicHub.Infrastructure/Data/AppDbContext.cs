@@ -33,14 +33,27 @@ namespace MusicHub.Infrastructure.Data
                 b.HasKey(x=>x.Id);
                 b.Property(x => x.Caption).HasMaxLength(500);
                 b.Property(x => x.MediaUrl).HasMaxLength(1000).IsRequired();
-                b.OwnsMany(typeof(PostLike), "_likes", lb =>
+                //we enforce post is aggregate root and follow domain driven event 
+                b.OwnsMany(p => p.Likes, lb =>
                 {
+                    //owned by posts
                     lb.WithOwner().HasForeignKey("PostId");
                     lb.Property<Guid>("PostId");
                     lb.Property<Guid>("UserId");
                     lb.HasKey("PostId", "UserId"); // unique like per user per post
                     lb.ToTable("PostLikes");
                 });
+                b.Navigation(p => p.Likes).HasField("_likes");
+                b.OwnsMany(p => p.Comments, cb =>
+                {
+                    cb.WithOwner().HasForeignKey("PostId");
+                    cb.Property<Guid>("PostId");
+                    cb.Property<Guid>("Id");
+                    cb.HasKey("Id");
+                    cb.Property<string>("Text").HasMaxLength(500).IsRequired();
+                    cb.ToTable("PostComments");
+                });
+                b.Navigation(p => p.Comments).HasField("_comments");
             });
         }
         //overriding the meathid for logging for whenever the operation is complete

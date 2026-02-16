@@ -11,6 +11,8 @@ namespace MusicHub.Domain.Entities
 {
     public class Post : BaseEntity
     {
+        //we made postlike and postcomments in order to not expose this outside and make it update from outside we made post as the root aggregate for both rather then using naviagtional property we used this
+        //backing field for likes and posts
         private readonly List<PostLike> _likes = new();
         private readonly List<PostComment> _comments = new();
         public Guid UserId { get; private set;  }
@@ -21,7 +23,7 @@ namespace MusicHub.Domain.Entities
         public string MediaUrl { get; private set; } = string.Empty;
 
         public DateTime CreatedAtUtc { get; private set; } = DateTime.UtcNow;
-
+        //ireadonly because it doesn't allow add or remove like readonly 
         public IReadOnlyCollection<PostLike> Likes => _likes;
         public IReadOnlyCollection<PostComment> Comments => _comments;
         public Post(Guid userId, InstrumentType instrument, string mediaUrl, string caption)

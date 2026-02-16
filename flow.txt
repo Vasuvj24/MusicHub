@@ -1,1 +1,3 @@
 apicall->controller->entities(for getting data)->data is mapped to dto->dto is returned back we don't want to expose entity to clietnt
+Domain driven event where BL(domain) runs your design not db
+Post is aggregate root whihc controls the flow of postcomment and postlikes
