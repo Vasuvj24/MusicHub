@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MusicHub.Domain.Common;
+using MusicHub.Domain.Entities;
 using MusicHub.Domain.Users;
 using MusicHub.Infrastructure.Events;
 using System;
@@ -11,13 +12,38 @@ namespace MusicHub.Infrastructure.Data
     public class AppDbContext : DbContext
     {
         private readonly EventDispatcher _dispatcher;
-        //configuring the configuration via options and usign base class constructor to do that and also setting dispatcher
+        //configuring the configuration via options and using base class constructor to do that and also setting dispatcher
         public AppDbContext(DbContextOptions<AppDbContext> options,EventDispatcher dispatcher) : base(options)
         {
             _dispatcher = dispatcher;
         }
-        //property to get the user from the db
+        //creating a user table in db
+        //set is property to get the user from the db
+        //return object to the refecence of dbset of type t
         public DbSet<User> Users => Set<User>();
+        public DbSet<Post> Posts => Set<Post>();
+        //essentially for making the blueprint for change tracker also used by qyeru translation , save changes, migrations 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            //overriding the actual model 
+            modelBuilder.Entity<Post>(b =>
+            {
+                b.HasKey(x=>x.Id);
+                b.Property(x => x.Caption).HasMaxLength(500);
+                b.Property(x => x.MediaUrl).HasMaxLength(1000).IsRequired();
+                b.OwnsMany(typeof(PostLike), "_likes", lb =>
+                {
+                    lb.WithOwner().HasForeignKey("PostId");
+                    lb.Property<Guid>("PostId");
+                    lb.Property<Guid>("UserId");
+                    lb.HasKey("PostId", "UserId"); // unique like per user per post
+                    lb.ToTable("PostLikes");
+                });
+            });
+        }
+        //overriding the meathid for logging for whenever the operation is complete
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var domainEntries = ChangeTracker.Entries<BaseEntity>().Where(x => x.Entity.DomainEvents.Any()).ToList();
@@ -28,6 +54,7 @@ namespace MusicHub.Infrastructure.Data
                 {
                     await _dispatcher.Dispatch(domainevent);
                 }
+                //clearing this for particular life cycle of save changes 
                 entity.Entity.ClearDomainEvents();
             }
             //int represents how many rows are affected

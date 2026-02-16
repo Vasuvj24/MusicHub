@@ -1,6 +1,7 @@
 @MusicHub.API_HostAddress = http://localhost:5066
 
-GET {{MusicHub.API_HostAddress}}/weatherforecast/
+GET {{MusicHub.API_HostAddress}}/api/auth/register
 Accept: application/json
+
 
 ###

@@ -9,6 +9,7 @@ namespace MusicHub.Infrastructure
 
     public class UnitOfWork : IUnitOfWork
     {
+        //used to perform th operations on db 
         private readonly AppDbContext _context;
 
         public UnitOfWork(AppDbContext context)

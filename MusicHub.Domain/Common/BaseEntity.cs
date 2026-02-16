@@ -5,6 +5,8 @@ using System.Text;
 namespace MusicHub.Domain.Common
 {
     //making abstract as needed some function of my own implementation and some needs implementation
+    //used this to add event like post like and other event so that can incorporate logs or notification
+    //using domain driven architecture
     public abstract class BaseEntity
     {
         public Guid Id { get; protected set; } = Guid.NewGuid();

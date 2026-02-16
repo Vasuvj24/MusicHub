@@ -15,6 +15,7 @@ namespace MusicHub.Application.Services
             _repo = repo;
             _uow = uow;
         }
+        //used for registering the 
         public async Task RegisterAsync(string email,string password)
         {
             var existing = await _repo.GetByEmailAsync(email);

@@ -1,11 +1,20 @@
 using Microsoft.EntityFrameworkCore;
+using MusicHub.Application.Interfaces;
+using MusicHub.Application.Services;
+using MusicHub.Infrastructure;
 using MusicHub.Infrastructure.Data;
+using MusicHub.Infrastructure.Events;
+using MusicHub.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<EventDispatcher>();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(

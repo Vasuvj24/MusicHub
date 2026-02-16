@@ -10,6 +10,7 @@ namespace MusicHub.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
+        //used this to add data to repo and all the logic resides inside
         private readonly AppDbContext _context;
 
         public UserRepository (AppDbContext context)
@@ -18,12 +19,13 @@ namespace MusicHub.Infrastructure.Repositories
         }
         public async Task AddAsync(User user)
         {
-            await _context.Users.AddAsync(user);
+            //adding user to the db
+            _context.Users.Add(user);
         }
 
         public async Task<User?> GetByEmailAsync(string email)
         {
-            return await _context.Users
+            return await _context.Users.AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Email == email);
         }
     }

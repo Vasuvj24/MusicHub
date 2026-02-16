@@ -1,0 +1,1 @@
+apicall->controller->entities(for getting data)->data is mapped to dto->dto is returned back we don't want to expose entity to clietnt
