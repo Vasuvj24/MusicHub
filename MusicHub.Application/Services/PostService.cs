@@ -16,28 +16,28 @@ namespace MusicHub.Application.Services
             _posts = posts;
             _uow = uow;
         }
-        public async Task LikeAsync(Guid postId, LikePostDto dto, CancellationToken ct)
+        public async Task LikeAsync(Guid currentUserId, Guid postId, LikePostDto dto, CancellationToken ct)
         {
             var post = await _posts.GetByIdAsync(postId, ct)
                        ?? throw new KeyNotFoundException("Post not found.");
 
-            post.Like(dto.UserId);
+            post.Like(currentUserId);
 
             await _uow.SaveChangesAsync();
         }
-        public async Task<Guid> CreateAsync(CreatePostDto dto, CancellationToken ct)
+        public async Task<Guid> CreateAsync(Guid currentUserId,CreatePostDto dto, CancellationToken ct)
         {
-            var post = new Post(dto.UserId, dto.Instrument, dto.MediaUrl, dto.Caption ?? "");
+            var post = new Post(currentUserId, dto.Instrument, dto.MediaUrl, dto.Caption ?? "");
             await _posts.AddAsync(post, ct);
             await _uow.SaveChangesAsync(); // your existing UoW
             return post.Id;
         }
-        public async Task CommentAsync(Guid postId, AddCommentDto dto, CancellationToken ct)
+        public async Task CommentAsync(Guid currentUserId, Guid postId, AddCommentDto dto, CancellationToken ct)
         {
             var post = await _posts.GetByIdAsync(postId, ct)
                        ?? throw new KeyNotFoundException("Post not found.");
 
-            post.AddComment(dto.UserId, dto.Text);
+            post.AddComment(currentUserId, dto.Text);
 
             await _uow.SaveChangesAsync();
         }

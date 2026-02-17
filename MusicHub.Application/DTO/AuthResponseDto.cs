@@ -4,8 +4,8 @@ using System.Text;
 
 namespace MusicHub.Application.DTO
 {
-    public class LikePostDto
+    public sealed class AuthResponseDto
     {
-        //public Guid UserId { get; set; }
+        public string AccessToken { get; set; } = "";
     }
 }

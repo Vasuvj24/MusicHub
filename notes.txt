@@ -1,0 +1,24 @@
+Strategy	Queries	Result Shape	Risk
+Lazy	1 + N	Clean per query	? N+1
+Explicit	1 + N	Clean per query	? N+1
+Eager Single	1	Duplicated rows	? Cartesian explosion
+SplitQuery	Few	Clean	? Safe
+Projection	1 optimized	Clean	?? Best
+
+Keyword	Used For	Risk
+Include	Eager loading	Cartesian explosion
+ThenInclude	Nested eager loading	Same
+Entry	Explicit loading	N+1 if misused
+Collection	Explicit load list nav	N+1 if loop
+Reference	Explicit load single nav	N+1 if loop
+Load	Executes explicit load	N+1 risk
+AsSplitQuery	Avoid explosion	Safe
+Select	Projection	Best
+AsNoTracking	Read-only optimization	Safe
+
+authorization is for settting the claims policies(subscription,isveriifed) -(what can you do)and authentication is responsible for validating token (who are you)
+authentication
+-validates claims,tokens etc. if everything fine User.Identity.IsAuthenticated = true
+authorization
+-checks are you allowed according to your claims and you satisfy policy and isauthenticated is true or not
+

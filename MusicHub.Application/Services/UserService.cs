@@ -1,4 +1,6 @@
-﻿using MusicHub.Application.Interfaces;
+﻿using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using MusicHub.Application.DTO;
+using MusicHub.Application.Interfaces;
 using MusicHub.Domain.Users;
 using System;
 using System.Collections.Generic;
@@ -10,10 +12,12 @@ namespace MusicHub.Application.Services
     {
         private readonly IUserRepository _repo;
         private readonly IUnitOfWork _uow;
-        public UserService(IUserRepository repo, IUnitOfWork uow)
+        private readonly ITokenService _tokens;
+        public UserService(IUserRepository repo, IUnitOfWork uow,ITokenService _tokens)
         {
             _repo = repo;
             _uow = uow;
+            _tokens = _tokens;
         }
         //used for registering the 
         public async Task RegisterAsync(string email,string password)
@@ -25,6 +29,14 @@ namespace MusicHub.Application.Services
             var user = new User(email, hash, Role.User);
             await _repo.AddAsync(user);
             await _uow.SaveChangesAsync();
+        }
+        //giving new token whule logging in
+        public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
+        {
+            var user = await _repo.GetByEmailAsync(dto.Email) ?? throw new UnauthorizedAccessException("invalid credentials");
+            var ok = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
+            if (!ok) throw new UnauthorizedAccessException("invalid credentials");
+            return new AuthResponseDto { AccessToken = _tokens.CreateAccessToken(user) };
         }
     }
 }
