@@ -15,6 +15,8 @@ namespace MusicHub.Infrastructure
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
+            Console.WriteLine("UoW ctx: " + _context.GetHashCode());
+
         }
 
         public async Task<int> SaveChangesAsync()

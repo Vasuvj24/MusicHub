@@ -81,6 +81,11 @@ namespace MusicHub.Infrastructure.Data
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var domainEntries = ChangeTracker.Entries<BaseEntity>().Where(x => x.Entity.DomainEvents.Any()).ToList();
+            foreach (var e in this.ChangeTracker.Entries())
+            {
+                Console.WriteLine($"{e.Metadata.Name} => {e.State}");
+            }
+
             var result = await base.SaveChangesAsync(cancellationToken);
             foreach (var entity in domainEntries)
             {

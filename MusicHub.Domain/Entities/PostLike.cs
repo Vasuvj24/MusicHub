@@ -10,7 +10,7 @@ namespace MusicHub.Domain.Entities
         public Guid UserId {  get; private set; }
         public DateTime CreatedAtUtc { get; private set; } = DateTime.UtcNow;
         private PostLike() { }
-        public PostLike(Guid postId, Guid userId)
+        public PostLike(Guid postId,Guid userId)
         {
             PostId = postId;
             UserId = userId;

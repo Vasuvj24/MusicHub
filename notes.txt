@@ -68,4 +68,5 @@ eg modelBuilder.Entity<Gig>()
 it gives access to properties like return ok , bad request and other routing etc.
 using controller base + [apicontroller] already binds dto automatically to body ot whatever
 give access to httpcontext
-
+-by default when postlike problem is there we learned that when we do add and when we update primary key be it composite primary key it takes it as update because passing primary key to add says it that it already exist so it updates it which makes state modified and we encouter the problem which states that:
+The database operation was expected to affect 1 row(s), but actually affected 0 row(s).

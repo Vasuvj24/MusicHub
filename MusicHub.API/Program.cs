@@ -58,9 +58,20 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGet("/routes", (IEnumerable<EndpointDataSource> sources) =>
+{
+    var routes = sources
+        .SelectMany(s => s.Endpoints)
+        .OfType<RouteEndpoint>()
+        .Select(e => e.RoutePattern.RawText);
+
+    return Results.Ok(routes);
+});
+app.MapGet("/", () => "API is running ?");
 
 app.Run();

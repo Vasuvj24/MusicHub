@@ -41,8 +41,9 @@ namespace MusicHub.Domain.Entities
             if (userId == Guid.Empty) throw new ArgumentException("Invalid userId");
             if (_likes.Any(x => x.UserId == userId))
                 throw new InvalidOperationException("Already liked.");
-
-            _likes.Add(new PostLike(Id, userId));
+            PostLike p = new PostLike(Id, userId);
+            _likes.Add(p);
+            //_likes.Add(new PostLike(userId));
             AddDomainEvent(new PostLikedEvent(Id, userId));
         }
         public void AddComment(Guid userId, string text)

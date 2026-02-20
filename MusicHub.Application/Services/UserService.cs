@@ -12,12 +12,12 @@ namespace MusicHub.Application.Services
     {
         private readonly IUserRepository _repo;
         private readonly IUnitOfWork _uow;
-        private readonly ITokenService _tokens;
+        private readonly ITokenService tokens;
         public UserService(IUserRepository repo, IUnitOfWork uow,ITokenService _tokens)
         {
             _repo = repo;
             _uow = uow;
-            _tokens = _tokens;
+            tokens = _tokens;
         }
         //used for registering the 
         public async Task RegisterAsync(string email,string password)
@@ -36,7 +36,7 @@ namespace MusicHub.Application.Services
             var user = await _repo.GetByEmailAsync(dto.Email) ?? throw new UnauthorizedAccessException("invalid credentials");
             var ok = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
             if (!ok) throw new UnauthorizedAccessException("invalid credentials");
-            return new AuthResponseDto { AccessToken = _tokens.CreateAccessToken(user) };
+            return new AuthResponseDto { AccessToken = tokens.CreateAccessToken(user) };
         }
     }
 }

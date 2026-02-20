@@ -14,12 +14,12 @@ namespace MusicHub.API.Controllers
             _Service = service;
         }
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterUserDto dto)
+        public async Task<IActionResult> Register([FromBody] RegisterUserDto dto)
         {
             await _Service.RegisterAsync(dto.Email, dto.Password);
             return Ok("registered succesfully");
         }
-        [HttpPost("logic")]
+        [HttpPost("login")]
         public async Task<IActionResult> login([FromBody] LoginDto dto)
         {
             var res = await _Service.LoginAsync(dto);

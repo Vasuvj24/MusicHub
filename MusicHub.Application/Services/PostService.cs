@@ -1,6 +1,8 @@
-﻿using MusicHub.Application.DTO;
+﻿using Microsoft.EntityFrameworkCore;
+using MusicHub.Application.DTO;
 using MusicHub.Application.Interfaces;
 using MusicHub.Domain.Entities;
+using MusicHub.Domain.Users;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,10 +22,27 @@ namespace MusicHub.Application.Services
         {
             var post = await _posts.GetByIdAsync(postId, ct)
                        ?? throw new KeyNotFoundException("Post not found.");
+            var already = post.Likes.Any(l => l.UserId == currentUserId);
+            Console.WriteLine("Already liked? " + already);
 
             post.Like(currentUserId);
+            try
+            {
 
-            await _uow.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                foreach (var entry in ex.Entries)
+                {
+                    Console.WriteLine($"Concurrency on: {entry.Metadata.Name}, State: {entry.State}");
+                    foreach (var p in entry.Properties)
+                    {
+                        Console.WriteLine($"  {p.Metadata.Name}: Current={p.CurrentValue}, Original={p.OriginalValue}");
+                    }
+                }
+
+            }
         }
         public async Task<Guid> CreateAsync(Guid currentUserId,CreatePostDto dto, CancellationToken ct)
         {
