@@ -22,3 +22,50 @@ authentication
 authorization
 -checks are you allowed according to your claims and you satisfy policy and isauthenticated is true or not
 
+-di will onl handle controllers,middleware,minimalapi and classes registered under di
+-why we did configuration done using fluent api configuration like
+Advanced configurations like:
+
+Backing fields
+
+Composite keys
+
+Owned types
+
+Shadow properties
+
+Table renaming
+
+Composite foreign keys
+- in DDD infrastructure is responsible for ef core configuration Domain
+Application
+Infrastructure (EF Core)
+API
+Complex relationships need Fluent API
+Fluent API overrides Data Annotations.
+Fluent API gives:
+
+More control
+
+More flexibility
+
+Cleaner separation
+Fluent API is a method-chaining configuration style used in EF Core to define how your domain classes map to the database.
+
+It is more powerful and flexible than attributes.
+
+Property Access is setting using setter
+eg modelBuilder.Entity<Gig>()
+    .Property(g => g.Title)
+    .UsePropertyAccessMode(PropertyAccessMode.Property);
+Field Access Mode it uses backing field to update setter is not called
+prefer field is option where if it loads ddata from db uses field only but during normal setting there property works
+eg modelBuilder.Entity<Gig>()
+    .Property(g => g.Title)
+    .HasField("_title")
+    .UsePropertyAccessMode(PropertyAccessMode.PreferField);
+-inheriting from controller base means
+it gives access to properties like return ok , bad request and other routing etc.
+using controller base + [apicontroller] already binds dto automatically to body ot whatever
+give access to httpcontext
+

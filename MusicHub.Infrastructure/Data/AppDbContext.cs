@@ -6,6 +6,7 @@ using MusicHub.Infrastructure.Events;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace MusicHub.Infrastructure.Data
 {
@@ -21,8 +22,10 @@ namespace MusicHub.Infrastructure.Data
         //set is property to get the user from the db
         //return object to the refecence of dbset of type t
         public DbSet<User> Users => Set<User>();
+        public DbSet<Gig> Gigs => Set<Gig>();
         public DbSet<Post> Posts => Set<Post>();
         //essentially for making the blueprint for change tracker also used by qyeru translation , save changes, migrations 
+        //runs on migration and also in once per app lifecycle
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -54,6 +57,24 @@ namespace MusicHub.Infrastructure.Data
                     cb.ToTable("PostComments");
                 });
                 b.Navigation(p => p.Comments).HasField("_comments");
+            });
+            modelBuilder.Entity<Gig>(g =>
+            {
+                //setting primary key
+                g.HasKey(x=> x.Id);
+                g.Property(x => x.Title).HasMaxLength(200).IsRequired();
+                g.Property(x => x.Description).HasMaxLength(2000);
+                g.OwnsMany(g => g.Members, gig =>
+                {
+                    gig.WithOwner().HasForeignKey("GigId");
+                    gig.Property<Guid>("GigId");
+                    gig.Property<Guid>("UserId");
+                    //making this composite primary key
+                    gig.HasKey("GigId", "UserId"); // unique per gig per user
+                    gig.ToTable("GigMembers");
+                });
+                //members have backing field _members
+                g.Navigation(g => g.Members).HasField("_members");
             });
         }
         //overriding the meathid for logging for whenever the operation is complete

@@ -19,7 +19,7 @@ namespace MusicHub.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreatePostDto dto, CancellationToken ct)
         {
-            //user gets attached when we get the jwt and claims are extracted from it 
+            //user gets in httpcontext attached when we get the jwt and claims are extracted from it 
             var userId = User.GetUserId();
             var id = await _posts.CreateAsync(userId,dto, ct);
             return Ok(new { postId = id });
