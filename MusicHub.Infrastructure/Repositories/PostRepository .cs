@@ -23,7 +23,7 @@ namespace MusicHub.Infrastructure.Repositories
         }
         public async Task<Post?> GetByIdAsync(Guid postId,CancellationToken cts)
         {
-            return await _db.Posts.Include(p=>p.Likes).FirstOrDefaultAsync(p => p.Id == postId,cts);
+            return await _db.Posts.AsSplitQuery().Include(p=>p.Likes).Include(c=>c.Comments).FirstOrDefaultAsync(p => p.Id == postId,cts);
         }
         public async Task<List<Post>> GetLatestAsync(int take, CancellationToken cts)
         {

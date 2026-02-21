@@ -12,9 +12,9 @@ namespace MusicHub.Domain.Entities
         public InstrumentType Instrument { get; private set; }
         public GigMemberStatus Status { get; private set; } = GigMemberStatus.Pending;
         public DateTime CreatedAtUtc { get; private set; } = DateTime.UtcNow;
-        public GigMember(Guid gigId, Guid userId, InstrumentType instrument)
+        public GigMember(Guid userId, InstrumentType instrument)
         {
-            GigId = gigId;
+            //GigId = gigId;
             UserId = userId;
             Instrument = instrument;
             Status = GigMemberStatus.Pending;

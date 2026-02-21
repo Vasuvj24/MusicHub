@@ -6,7 +6,7 @@ namespace MusicHub.Domain.Entities
 {
     public class PostComment
     {
-        public Guid Id { get; private set; } = Guid.NewGuid();
+        public Guid Id { get; private set; } 
 
         public Guid PostId { get; private set; }
         public Guid UserId { get; private set; }
@@ -16,9 +16,10 @@ namespace MusicHub.Domain.Entities
 
         private PostComment() { } // EF
 
-        public PostComment(Guid postId, Guid userId, string text)
+        public PostComment(Guid userId, string text)
         {
-            PostId = postId;
+            //Id = Guid.NewGuid();
+            //PostId = postId;
             UserId = userId;
             Text = text;
         }

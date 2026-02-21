@@ -39,7 +39,7 @@ namespace MusicHub.Domain.Entities
             if (_members.Any(m => m.UserId == userId))
                 throw new InvalidOperationException("Already applied/joined");
 
-            _members.Add(new GigMember(Id, userId, instrument));
+            _members.Add(new GigMember(userId, instrument));
             AddDomainEvent(new GigAppliedEvent(Id, userId));
         }
         public void ApproveMember(Guid actorId, Guid memberUserId)

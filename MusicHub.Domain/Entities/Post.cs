@@ -41,7 +41,7 @@ namespace MusicHub.Domain.Entities
             if (userId == Guid.Empty) throw new ArgumentException("Invalid userId");
             if (_likes.Any(x => x.UserId == userId))
                 throw new InvalidOperationException("Already liked.");
-            PostLike p = new PostLike(Id, userId);
+            PostLike p = new PostLike(userId);
             _likes.Add(p);
             //_likes.Add(new PostLike(userId));
             AddDomainEvent(new PostLikedEvent(Id, userId));
@@ -52,7 +52,7 @@ namespace MusicHub.Domain.Entities
             if (string.IsNullOrWhiteSpace(text))
                 throw new InvalidOperationException("Comment cannot be empty.");
 
-            _comments.Add(new PostComment(Id, userId, text.Trim()));
+            _comments.Add(new PostComment(userId, text.Trim()));
             AddDomainEvent(new PostCommentEvent(Id, userId));
         }
     }
