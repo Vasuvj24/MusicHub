@@ -6,15 +6,15 @@ SplitQuery	Few	Clean	? Safe
 Projection	1 optimized	Clean	?? Best
 
 Keyword	Used For	Risk
-Include	Eager loading	Cartesian explosion
-ThenInclude	Nested eager loading	Same
-Entry	Explicit loading	N+1 if misused
-Collection	Explicit load list nav	N+1 if loop
-Reference	Explicit load single nav	N+1 if loop
-Load	Executes explicit load	N+1 risk
-AsSplitQuery	Avoid explosion	Safe
-Select	Projection	Best
-AsNoTracking	Read-only optimization	Safe
+Include	- Eager loading	Cartesian explosion
+ThenInclude	 - Nested eager loading	Same
+Entry -	Explicit loading	N+1 if misused
+Collection -	Explicit load list nav	N+1 if loop
+Reference - 	Explicit load single nav	N+1 if loop
+Load -	Executes explicit load	N+1 risk
+AsSplitQuery -	Avoid explosion	Safe
+Select -	Projection	Best
+AsNoTracking -	Read-only optimization	Safe
 
 authorization is for settting the claims policies(subscription,isveriifed) -(what can you do)and authentication is responsible for validating token (who are you)
 authentication
@@ -76,3 +76,25 @@ REPO(access the data and add it to db)
 service uses repo function to add it do the db
 so here forign key is for rules basically we can add cascading rules and everythig but it doesn't heplp in quick search like indexes?
 -http verb is for character we need to write logic for idempotency and like cachingis by default can be done to get request so http verb is mainly for character but we can write logic on basis of verb
+-idempotency
+-n+1
+
+Designed Domain layer + Application layer separation
+
+Used EF Core Owned Entities
+
+Solved composite key issues
+
+Handled backing fields properly
+
+Implemented JWT authentication
+
+Understood claims vs roles vs authorization
+
+Dealt with idempotency
+
+Understood Change Tracker
+
+Used AsNoTracking properly
+
+Implemented Domain Events
