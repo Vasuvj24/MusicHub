@@ -24,6 +24,8 @@ namespace MusicHub.Infrastructure.Data
         public DbSet<User> Users => Set<User>();
         public DbSet<Gig> Gigs => Set<Gig>();
         public DbSet<Post> Posts => Set<Post>();
+        public DbSet<UserProfile> Profiles => Set<UserProfile>();
+
         //essentially for making the blueprint for change tracker also used by qyeru translation , save changes, migrations 
         //runs on migration and also in once per app lifecycle
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -76,6 +78,28 @@ namespace MusicHub.Infrastructure.Data
                 //members have backing field _members
                 g.Navigation(g => g.Members).HasField("_members");
             });
+            modelBuilder.Entity<UserProfile>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.HasIndex(x => x.UserId).IsUnique();
+
+                b.Property(x => x.DisplayName).HasMaxLength(100);
+                b.Property(x => x.Bio).HasMaxLength(1000);
+                b.Property(x => x.City).HasMaxLength(100);
+                b.Property(x => x.Genres).HasMaxLength(200);
+
+                b.OwnsMany(t=> t.Services, sb =>
+                {
+                    sb.WithOwner().HasForeignKey("ProfileId");
+                    sb.Property<Guid>("ProfileId");
+                    sb.Property<Guid>("Id");
+                    sb.HasKey("Id");
+                    sb.Property<string>("Title").HasMaxLength(200).IsRequired();
+                    sb.Property<string>("Description").HasMaxLength(2000);
+                    sb.ToTable("ServiceListings");
+                });
+            });
+
         }
         //overriding the meathid for logging for whenever the operation is complete
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MusicHub.Application.Interfaces;
@@ -9,6 +10,7 @@ using MusicHub.Infrastructure.Auth;
 using MusicHub.Infrastructure.Data;
 using MusicHub.Infrastructure.Events;
 using MusicHub.Infrastructure.Repositories;
+using MusicHub.Infrastructure.Storage;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,9 +36,14 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+builder.Services.AddScoped<IMediaLocalStorage, LocalMediaStorage>();
 builder.Services.AddScoped<IGigRepository, GigRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<PostService>();
+builder.Services.AddScoped<ProfileService>();
+builder.Services.AddScoped<MediaService>();
 builder.Services.AddScoped<GigService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<EventDispatcher>();
@@ -56,11 +63,18 @@ if (app.Environment.IsDevelopment())
 {
     //app.MapOpenApi();
 }
-
+//adding to get catch the exception for (middleware chainging its like chaining in one another calling one function and all others are its scope on into the other)
+app.UseMiddleware<MusicHub.API.Middleware.ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
+//adding before controllers because we need to check before controllers wheather its a valid path 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "Uploads")),
+    RequestPath = "/uploads"
+});
 app.MapControllers();
 
 app.MapGet("/routes", (IEnumerable<EndpointDataSource> sources) =>

@@ -71,3 +71,8 @@ give access to httpcontext
 -by default when postlike problem is there we learned that when we do add and when we update primary key be it composite primary key it takes it as update because passing primary key to add says it that it already exist so it updates it which makes state modified and we encouter the problem which states that:
 The database operation was expected to affect 1 row(s), but actually affected 0 row(s).
 -in database owns many says its dependent we can access the table using ownner but in hasmany we can access the table without using or using owner identity has many doens not ahve strict rules unless mentioned
+DESING
+REPO(access the data and add it to db)
+service uses repo function to add it do the db
+so here forign key is for rules basically we can add cascading rules and everythig but it doesn't heplp in quick search like indexes?
+-http verb is for character we need to write logic for idempotency and like cachingis by default can be done to get request so http verb is mainly for character but we can write logic on basis of verb
