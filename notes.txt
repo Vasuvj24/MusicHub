@@ -98,3 +98,45 @@ Understood Change Tracker
 Used AsNoTracking properly
 
 Implemented Domain Events
+
+hashes can't be reversed by encrypted can be decrypted
+
+-refresh token is send to client with access token 
+--after login the db stores refresh token in hash 
+--sends the normal without hashed refresh token
+--this token is stored in cookies with only send over https network with only same site can send cookies with request also it doesn't allow scritp or opening the cookies folder to see it
+--now with all the request it gets send and once
+--logic of refresh token to get access token is writeen on frontend
+
+-valuetask is allocating memory in stack when its returned synchrnously
+
+-In LINQ, most query operators like:
+
+Where()
+
+Select()
+
+OrderBy()
+
+Take()
+
+Skip()
+
+use deferred execution.
+
+-set<> this is makes a object instance reasonly 
+-Set<T>() looks up the correct one from internal dictionary.
+
+-why to check the user before checking refresh token
+Scenario 1 — User was deleted
+
+Imagine:
+
+User logs in → gets refresh token.
+
+Admin deletes user.
+
+Attacker still has refresh token.
+
+Attacker calls /refresh.
+

@@ -26,6 +26,14 @@ namespace MusicHub.Domain.Entities
         //ireadonly because it doesn't allow add or remove like readonly 
         public IReadOnlyCollection<PostLike> Likes => _likes;
         public IReadOnlyCollection<PostComment> Comments => _comments;
+        public bool IsDeleted { get; private set; }
+        public DateTime? DeletedAtUtc { get; private set; }
+
+        public void SoftDelete()
+        {
+            IsDeleted = true;
+            DeletedAtUtc = DateTime.UtcNow;
+        }
         public Post(Guid userId, InstrumentType instrument, string mediaUrl, string caption)
         {
             if (userId == Guid.Empty) throw new ArgumentNullException("user id is null");

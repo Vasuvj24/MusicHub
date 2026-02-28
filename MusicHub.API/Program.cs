@@ -11,6 +11,7 @@ using MusicHub.Infrastructure.Data;
 using MusicHub.Infrastructure.Events;
 using MusicHub.Infrastructure.Repositories;
 using MusicHub.Infrastructure.Storage;
+using MusicHub.Infrastructure.Time;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +42,13 @@ builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddScoped<IMediaLocalStorage, LocalMediaStorage>();
 builder.Services.AddScoped<IGigRepository, GigRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IClock, SystemClock>();
+
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<IPostReportRepository, PostReportRepository>();
+
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<MediaService>();

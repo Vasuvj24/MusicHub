@@ -9,5 +9,6 @@ namespace MusicHub.Application.Interfaces
     {
         Task AddAsync(User User);
         Task<User?> GetByEmailAsync(string Email);
+        Task<User?> GetByIdAsync(Guid id);
     }
 }

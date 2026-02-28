@@ -29,5 +29,15 @@ namespace MusicHub.Infrastructure.Repositories
         {
             return await _db.Posts.OrderByDescending(p => p.CreatedAtUtc).Take(take).ToListAsync();
         }
+        public Task<Post?> GetByIdIncludingDeletedAsync(Guid postId, CancellationToken ct)
+    => _db.Posts.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Id == postId, ct);
+
+        public async Task<(int total, List<Post> items)> GetPagedAsync(int skip, int take, CancellationToken ct)
+        {
+            var query = _db.Posts.OrderByDescending(p => p.CreatedAtUtc);
+            var total = await query.CountAsync(ct);
+            var items = await query.Skip(skip).Take(take).ToListAsync(ct);
+            return (total, items);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MusicHub.API.Extensions;
 using MusicHub.Application.DTO;
+using MusicHub.Application.DTO.Admin;
 using MusicHub.Application.Services;
 
 namespace MusicHub.API.Controllers
@@ -11,9 +12,11 @@ namespace MusicHub.API.Controllers
     public class PostController : ControllerBase
     {
         private readonly PostService _posts;
-        public PostController(PostService posts)
+        private readonly AdminService _admin; 
+        public PostController(PostService posts,AdminService admin)
         {
             _posts = posts;
+            _admin = admin;
         }
         [Authorize]
         [HttpPost]
@@ -46,6 +49,14 @@ namespace MusicHub.API.Controllers
         {
             var items = await _posts.GetLatestAsync(take, ct);
             return Ok(items);
+        }
+        [Authorize]
+        [HttpPost("{postId:guid}/report")]
+        public async Task<IActionResult> Report(Guid postId, [FromBody] ReportPostDto dto, CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+            await _admin.ReportPostAsync(userId, postId, dto.Reason, dto.Note, ct);
+            return Ok();
         }
     }
 }

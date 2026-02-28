@@ -19,11 +19,13 @@ namespace MusicHub.Infrastructure.Data
             _dispatcher = dispatcher;
         }
         //creating a user table in db
-        //set is property to get the user from the db
+        //set<> is meathod to get the user object that helps qeury the dbfrom the db
         //return object to the refecence of dbset of type t
         public DbSet<User> Users => Set<User>();
         public DbSet<Gig> Gigs => Set<Gig>();
         public DbSet<Post> Posts => Set<Post>();
+        public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+        public DbSet<PostReport> PostReports => Set<PostReport>();
         public DbSet<UserProfile> Profiles => Set<UserProfile>();
 
         //essentially for making the blueprint for change tracker also used by qyeru translation , save changes, migrations 
@@ -38,6 +40,7 @@ namespace MusicHub.Infrastructure.Data
                 b.HasKey(x=>x.Id);
                 b.Property(x => x.Caption).HasMaxLength(500);
                 b.Property(x => x.MediaUrl).HasMaxLength(1000).IsRequired();
+                b.HasQueryFilter(p => !p.IsDeleted);
                 //we enforce post is aggregate root and follow domain driven event 
                 b.OwnsMany(p => p.Likes, lb =>
                 {
@@ -98,6 +101,21 @@ namespace MusicHub.Infrastructure.Data
                     sb.Property<string>("Description").HasMaxLength(2000);
                     sb.ToTable("ServiceListings");
                 });
+            });
+            modelBuilder.Entity<RefreshToken>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.HasIndex(x => x.UserId);
+                b.HasIndex(x => x.TokenHash).IsUnique();
+                b.Property(x => x.TokenHash).HasMaxLength(128).IsRequired();
+            });
+
+            modelBuilder.Entity<PostReport>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.HasIndex(x => x.PostId);
+                b.HasIndex(x => x.ReportedByUserId);
+                b.Property(x => x.Note).HasMaxLength(1000);
             });
 
         }

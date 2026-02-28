@@ -28,5 +28,7 @@ namespace MusicHub.Infrastructure.Repositories
             return await _context.Users.AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Email == email);
         }
+        public Task<User?> GetByIdAsync(Guid id)
+            => _context.Users.FirstOrDefaultAsync(x => x.Id == id);
     }
 }
