@@ -140,3 +140,17 @@ Attacker still has refresh token.
 
 Attacker calls /refresh.
 
+Right now MusicHub has:
+
+JWT + Refresh Token rotation ✅
+
+CRUD posts ✅
+
+Reporting + moderation ✅
+
+Soft delete ✅
+
+Pagination (basic) ✅
+
+added exception handling middleware
+
