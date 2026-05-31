@@ -154,3 +154,5 @@ Pagination (basic) ✅
 
 added exception handling middleware
 
+TEST ADMIN CREDENTIALS
+{ "email": "admin@test.com", "password": "admin@1234" }
