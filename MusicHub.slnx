@@ -1,7 +1,9 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path="flow.txt" />
+    <File Path="HighLevelArch.txt" />
     <File Path="notes.txt" />
+    <File Path="UmlDiag.txt" />
   </Folder>
   <Project Path="MusicHub.API/MusicHub.API.csproj" />
   <Project Path="MusicHub.Application/MusicHub.Application.csproj" />

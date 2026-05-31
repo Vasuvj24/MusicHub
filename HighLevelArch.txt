@@ -1,0 +1,80 @@
+┌──────────────────────────────────────┐
+│              Client App              │
+│                                      │
+│ React / Angular / Mobile App         │
+└─────────────────┬────────────────────┘
+                  │ HTTP
+                  ▼
+┌──────────────────────────────────────┐
+│              API Layer               │
+│                                      │
+│ AuthController                       │
+│ PostsController                      │
+│ GigController                        │
+│ ProfileController                    │
+│ MediaController                      │
+│ AdminController                      │
+│ MeController                         │
+└─────────────────┬────────────────────┘
+                  │
+                  ▼
+                   application layer deals with the actual workflow 
+┌──────────────────────────────────────┐
+│          Application Layer           │
+│                                      │
+│ AuthService                          │
+│ UserService                          │
+│ PostService                          │
+│ GigService                           │
+│ ProfileService                       │
+│ MediaService                         │
+│ AdminService                         │
+└─────────────────┬────────────────────┘
+                  │
+                  ▼
+                  domain is buisiness logic feature rules 
+┌──────────────────────────────────────┐
+│             Domain Layer             │
+│                                      │
+│ User                                │
+│ Post                                │
+│ Comment                             │
+│ Gig                                 │
+│ GigMember                           │
+│ UserProfile                         │
+│ ServiceListing                      │
+│ RefreshToken                        │
+│ PostReport                          │
+│ Domain Events                       │
+└─────────────────┬────────────────────┘
+                  │
+                  ▼
+┌──────────────────────────────────────┐
+│         Infrastructure Layer         │
+│                                      │
+│ EF Core Repositories                 │
+│ SQL Server                           │
+│ TokenService                         │
+│ EventDispatcher                      │
+│ LocalMediaStorage                    │
+└──────────────────────────────────────┘
+----------------------------------------------
+Controllers
+    ↓
+Services
+    ↓
+Repositories
+    ↓
+DbContext
+-----------------------------------------------
+User
+ ↓
+Login
+ ↓
+JWT
+ ↓
+Refresh Token
+ ↓
+Rotation
+ ↓
+Logout
