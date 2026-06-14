@@ -57,13 +57,14 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<EventDispatcher>();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(
+    options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")
-        );
+    );
 });
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 //builder.Services.AddOpenApi();
-
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -71,8 +72,16 @@ if (app.Environment.IsDevelopment())
 {
     //app.MapOpenApi();
 }
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+
+app.UseMiddleware<MusicHub.API.Middleware.ExceptionHandlingMiddleware>();
 //adding to get catch the exception for (middleware chainging its like chaining in one another calling one function and all others are its scope on into the other)
 app.UseMiddleware<MusicHub.API.Middleware.ExceptionHandlingMiddleware>();
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -84,7 +93,7 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/uploads"
 });
 app.MapControllers();
-
+//just for getting all the routes 
 app.MapGet("/routes", (IEnumerable<EndpointDataSource> sources) =>
 {
     var routes = sources

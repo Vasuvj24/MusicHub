@@ -1,9 +1,11 @@
-Strategy	Queries	Result Shape	Risk
-Lazy	1 + N	Clean per query	? N+1
-Explicit	1 + N	Clean per query	? N+1
-Eager Single	1	Duplicated rows	? Cartesian explosion
-SplitQuery	Few	Clean	? Safe
-Projection	1 optimized	Clean	?? Best
+| Strategy         | Queries | Problem               |
+| ---------------- | ------- | --------------------- |
+| Lazy Loading     | 1 + N   | N+1 queries           |
+| Explicit Loading | 1 + N   | N+1 queries           |
+| Eager Loading    | 1       | Cartesian explosion   |
+| Split Query      | Few     | Usually safe          |
+| Projection       | 1       | Usually best for APIs |
+
 
 Keyword	Used For	Risk
 Include	- Eager loading	Cartesian explosion
@@ -20,6 +22,7 @@ authorization is for settting the claims policies(subscription,isveriifed) -(wha
 authentication
 -validates claims,tokens etc. if everything fine User.Identity.IsAuthenticated = true
 authorization
+-authorization is for some endpoints where only login requred which authoriza us isauthenticated and can also create roles like not only admin user but premium user etc.
 -checks are you allowed according to your claims and you satisfy policy and isauthenticated is true or not
 
 -di will onl handle controllers,middleware,minimalapi and classes registered under di
@@ -71,6 +74,7 @@ give access to httpcontext
 -by default when postlike problem is there we learned that when we do add and when we update primary key be it composite primary key it takes it as update because passing primary key to add says it that it already exist so it updates it which makes state modified and we encouter the problem which states that:
 The database operation was expected to affect 1 row(s), but actually affected 0 row(s).
 -in database owns many says its dependent we can access the table using ownner but in hasmany we can access the table without using or using owner identity has many doens not ahve strict rules unless mentioned
+-OwnsMany represents dependent objects whose lifecycle is tied to the owner. HasMany represents separate entities that can exist and be queried independently.
 DESING
 REPO(access the data and add it to db)
 service uses repo function to add it do the db
@@ -99,7 +103,7 @@ Used AsNoTracking properly
 
 Implemented Domain Events
 
-hashes can't be reversed by encrypted can be decrypted
+ 
 
 -refresh token is send to client with access token 
 --after login the db stores refresh token in hash 

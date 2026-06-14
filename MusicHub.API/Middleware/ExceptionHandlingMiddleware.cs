@@ -25,7 +25,7 @@ namespace MusicHub.API.Middleware
                     UnauthorizedAccessException => (HttpStatusCode.Unauthorized,ex.Message),        
                     InvalidOperationException => (HttpStatusCode.BadRequest,ex.Message),
                     ArgumentException => (HttpStatusCode.BadRequest,ex.Message),
-                    _=> (HttpStatusCode.InternalServerError,"something went wrong")
+                    _=> (HttpStatusCode.InternalServerError, ex.ToString())
                 };
                 context.Response.StatusCode = (int)status;
                 var payload = new

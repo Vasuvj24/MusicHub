@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MusicHub.Application.DTO;
 using MusicHub.Application.Services;
 
 namespace MusicHub.API.Controllers
@@ -15,10 +16,11 @@ namespace MusicHub.API.Controllers
         }
         [Authorize]
         [HttpPost("upload")]
+        [Consumes("multipart/form-data")]
         [RequestSizeLimit(100_000_000)] // 100MB
-        public async Task<IActionResult> Upload([FromForm] IFormFile file, CancellationToken ct)
+        public async Task<IActionResult> Upload([FromForm] UploadRequest request, CancellationToken ct)
         {
-            var res = await _media.UploadAsync(file, ct);
+            var res = await _media.UploadAsync(request.File, ct);
             return Ok(res);
         }
         [Authorize]
