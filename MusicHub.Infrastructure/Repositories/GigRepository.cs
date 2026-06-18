@@ -21,6 +21,15 @@ namespace MusicHub.Infrastructure.Repositories
             _db.Gigs.AddAsync(gig,cts);
             return Task.CompletedTask;
         }
+        public async Task<List<Gig>> SearchGigsAsync(string term)
+        {
+            return await _db.Gigs
+                .Where(x =>
+                    x.Title.Contains(term) ||
+                    x.Description.Contains(term))
+                .OrderByDescending(x => x.ScheduledAtUtc)
+                .ToListAsync();
+        }
         public Task<Gig?> GetByIdAsync(Guid gigId, CancellationToken ct)
         {
             return _db.Gigs.FirstOrDefaultAsync(g => g.Id == gigId, ct);

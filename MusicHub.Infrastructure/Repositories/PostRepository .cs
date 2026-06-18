@@ -25,6 +25,14 @@ namespace MusicHub.Infrastructure.Repositories
         {
             return await _db.Posts.AsSplitQuery().Include(p=>p.Likes).Include(c=>c.Comments).FirstOrDefaultAsync(p => p.Id == postId,cts);
         }
+        public async Task<List<Post>> SearchPostsAsync(string term)
+        {
+            return await _db.Posts
+                .Where(x =>
+                    x.Caption.Contains(term))
+                .OrderByDescending(x => x.CreatedAtUtc)
+                .ToListAsync();
+        }
         public async Task<List<Post>> GetLatestAsync(int take, CancellationToken cts)
         {
             return await _db.Posts.OrderByDescending(p => p.CreatedAtUtc).Take(take).ToListAsync();

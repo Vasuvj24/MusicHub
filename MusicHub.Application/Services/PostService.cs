@@ -18,6 +18,20 @@ namespace MusicHub.Application.Services
             _posts = posts;
             _uow = uow;
         }
+        public async Task<List<PostResponseDto>> SearchPostsAsync(string term)
+        {
+            var posts =
+                await _posts.SearchPostsAsync(term);
+
+            return posts.Select(x =>
+                new PostResponseDto
+                {
+                    Id = x.Id,
+                    Caption = x.Caption,
+                    UserId = x.UserId,
+                    CreatedAtUtc = x.CreatedAtUtc
+                }).ToList();
+        }
         public async Task LikeAsync(Guid currentUserId, Guid postId, LikePostDto dto, CancellationToken ct)
         {
             var post = await _posts.GetByIdAsync(postId, ct)

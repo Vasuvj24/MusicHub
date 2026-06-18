@@ -16,6 +16,19 @@ namespace MusicHub.Application.Services
             _gigs = gigs;
             _uow = uow;
         }
+        public async Task<List<GigResponseDto>>  SearchGigsAsync(string term)
+        {
+            var gigs = await _gigs.SearchGigsAsync(term);
+
+            return gigs.Select(g => new GigResponseDto
+            {
+                Id = g.Id,
+                Title = g.Title,
+                Description = g.Description,
+                CreatorId = g.CreatedByUserId,
+                ScheduledAtUtc = g.ScheduledAtUtc
+            }).ToList();
+        }
         public async Task<Guid> CreateAsync(Guid currentUserId, CreateGigDto dto, CancellationToken ct)
         {
             var gig = new Gig(currentUserId, dto.Title, dto.Description ?? "", dto.ScheduledAtUtc);

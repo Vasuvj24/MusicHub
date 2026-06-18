@@ -10,5 +10,6 @@ namespace MusicHub.Application.Interfaces
         Task AddAsync(Gig gig, CancellationToken cts);
         Task<Gig?> GetByIdAsync(Guid gigId,CancellationToken cts);
         Task<List<Gig>> GetLatestAsync(int take,CancellationToken cts)   ;
+        Task<List<Gig>> SearchGigsAsync(string term);
     }
 }
