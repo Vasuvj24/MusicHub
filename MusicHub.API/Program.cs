@@ -43,6 +43,12 @@ builder.Services.AddScoped<IMediaLocalStorage, LocalMediaStorage>();
 builder.Services.AddScoped<IGigRepository, GigRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IClock, SystemClock>();
+builder.Services.AddScoped<
+    INotificationRepository,
+    NotificationRepository>();
+
+builder.Services.AddScoped<
+    NotificationService>();
 
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IPostReportRepository, PostReportRepository>();

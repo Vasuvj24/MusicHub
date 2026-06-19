@@ -11,10 +11,12 @@ namespace MusicHub.Application.Services
     {
         private readonly IGigRepository _gigs;
         private readonly IUnitOfWork _uow;
-        public GigService(IGigRepository gigs, IUnitOfWork uow)
+        private INotificationRepository _nr;
+        public GigService(IGigRepository gigs, IUnitOfWork uow,INotificationRepository nr)
         {
             _gigs = gigs;
             _uow = uow;
+            _nr = nr;
         }
         public async Task<List<GigResponseDto>>  SearchGigsAsync(string term)
         {
@@ -40,12 +42,32 @@ namespace MusicHub.Application.Services
         {
             var gig = await _gigs.GetByIdAsync(gigId, ct) ?? throw new KeyNotFoundException("Gig not found");
             gig.Apply(currentUserId, dto.Instrument);
+            await _nr.AddAsync(
+                new Notification
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = gig.CreatedByUserId,
+                    Message =
+                        $"{dto.Instrument} player musician applied to your gig",
+                    IsRead = false,
+                    CreatedAtUtc = DateTime.UtcNow
+                });
             await _uow.SaveChangesAsync();
         }
         public async Task ApproveAsync(Guid currentUserId, Guid gigId, ApproveMemberDto dto, CancellationToken ct)
         {
             var gig = await _gigs.GetByIdAsync(gigId, ct) ?? throw new KeyNotFoundException("Gig not found");
             gig.ApproveMember(currentUserId, dto.MemberUserId);
+            await _nr.AddAsync(
+            new Notification
+            {
+                Id = Guid.NewGuid(),
+                UserId = dto.MemberUserId,
+                Message =
+                    $"You were approved for gig '{gig.Title}'",
+                IsRead = false,
+                CreatedAtUtc = DateTime.UtcNow
+            });
             await _uow.SaveChangesAsync();
         }
         public async Task<List<Gig>> GetLatestAsync(int take, CancellationToken ct)

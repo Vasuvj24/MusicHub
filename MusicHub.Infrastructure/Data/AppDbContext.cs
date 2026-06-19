@@ -27,6 +27,7 @@ namespace MusicHub.Infrastructure.Data
         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
         public DbSet<PostReport> PostReports => Set<PostReport>();
         public DbSet<UserProfile> Profiles => Set<UserProfile>();
+        public DbSet<Notification> Notifications { get; set; }
 
         //essentially for making the blueprint for change tracker also used by qyeru translation , save changes, migrations 
         //runs on migration and also in once per app lifecycle
