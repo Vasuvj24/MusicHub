@@ -39,7 +39,11 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
-builder.Services.AddScoped<IMediaLocalStorage, LocalMediaStorage>();
+builder.Services.AddScoped<
+    IMediaStorage,
+    CloudinaryStorage>();
+builder.Services.Configure<CloudinarySettings>(
+    builder.Configuration.GetSection("Cloudinary"));
 builder.Services.AddScoped<IGigRepository, GigRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IClock, SystemClock>();
@@ -99,11 +103,11 @@ if (!Directory.Exists(uploadsPath))
     Directory.CreateDirectory(uploadsPath);
 }
 
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(uploadsPath),
-    RequestPath = "/uploads"
-});
+//app.UseStaticFiles(new StaticFileOptions
+//{
+//    FileProvider = new PhysicalFileProvider(uploadsPath),
+//    RequestPath = "/uploads"
+//});
 app.MapControllers();
 //just for getting all the routes 
 app.MapGet("/routes", (IEnumerable<EndpointDataSource> sources) =>

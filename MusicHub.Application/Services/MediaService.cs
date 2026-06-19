@@ -9,17 +9,24 @@ namespace MusicHub.Application.Services
 {
     public sealed class MediaService
     {
-        private readonly IMediaLocalStorage _storage;
-        public MediaService(IMediaLocalStorage storage)
+        private readonly IMediaStorage _storage;
+        public MediaService(IMediaStorage storage)
         {
             _storage = storage;
         }
         public async Task<UploadResultDto> UploadAsync(IFormFile file,CancellationToken cts)
         {
-            if (file.Length == 0) throw new ArgumentException("Empty file");
-            await using var stream = file.OpenReadStream();
-            var url = await _storage.SaveAsync(stream,file.FileName,cts);
-            return new UploadResultDto { Url = url };
+            if (file.Length == 0)
+                throw new ArgumentException("Empty file");
+
+            await using var stream =file.OpenReadStream();
+
+            var url = await _storage.UploadAsync(stream,file.FileName,cts);
+
+            return new UploadResultDto
+            {
+                Url = url
+            };
         }
         public async Task<bool> DeleteAsync(string fileName, CancellationToken cts)
         {

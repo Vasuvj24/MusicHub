@@ -24,8 +24,9 @@ namespace MusicHub.API.Controllers
             return Ok(res);
         }
         [Authorize]
-        [HttpDelete("{fileName}")]
-        public async Task<IActionResult> Delete(string fileName, CancellationToken ct)
+        [HttpDelete]
+        //filename points to url now
+        public async Task<IActionResult> Delete([FromQuery]string fileName, CancellationToken ct)
         {
             var result = await _media.DeleteAsync(fileName, ct);
 
