@@ -15,10 +15,22 @@ namespace MusicHub.Domain.Entities
         public Guid CreatedByUserId { get; private set; }
         public string Title { get; private set; } = "";
         public string Description { get; private set; } = "";
+        public bool IsDeleted { get; private set; }
+
+        public DateTime? DeletedAtUtc { get; private set; }
         public DateTime ScheduledAtUtc { get; private set; }
         public GigStatus Status { get; private set; } = GigStatus.Open;
 
         public IReadOnlyCollection<GigMember> Members => _members;
+        public void SoftDelete(Guid actorId)
+        {
+            if (actorId != CreatedByUserId)
+                throw new UnauthorizedAccessException(
+                    "Only creator can delete gig");
+
+            IsDeleted = true;
+            DeletedAtUtc = DateTime.UtcNow;
+        }
         private Gig() { } // EF
         public Gig(Guid createdByUserId, string title, string description, DateTime scheduledAtUtc)
         {
@@ -30,6 +42,7 @@ namespace MusicHub.Domain.Entities
             Description = description?.Trim() ?? "";
             ScheduledAtUtc = scheduledAtUtc;
             Status = GigStatus.Open;
+            CreatedAtUtc = DateTime.UtcNow;
 
             AddDomainEvent(new GigCreatedEvent(Id, CreatedByUserId));
         }

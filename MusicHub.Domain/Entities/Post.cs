@@ -22,7 +22,7 @@ namespace MusicHub.Domain.Entities
         // For Phase 2 we store only a URL/path (actual upload later in Phase 2.5/3)
         public string MediaUrl { get; private set; } = string.Empty;
 
-        public DateTime CreatedAtUtc { get; private set; } = DateTime.UtcNow;
+        //public DateTime CreatedAtUtc { get; private set; } = DateTime.UtcNow;
         //ireadonly because it doesn't allow add or remove like readonly 
         public IReadOnlyCollection<PostLike> Likes => _likes;
         public IReadOnlyCollection<PostComment> Comments => _comments;
@@ -33,6 +33,7 @@ namespace MusicHub.Domain.Entities
         {
             IsDeleted = true;
             DeletedAtUtc = DateTime.UtcNow;
+            CreatedAtUtc = DateTime.UtcNow;
         }
         public Post(Guid userId, InstrumentType instrument, string mediaUrl, string caption)
         {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MusicHub.Application.DTO;
+using MusicHub.Application.DTO.Common;
 using MusicHub.Application.Interfaces;
 using MusicHub.Domain.Entities;
 using MusicHub.Domain.Users;
@@ -71,6 +72,46 @@ namespace MusicHub.Application.Services
                        ?? throw new KeyNotFoundException("Post not found.");
 
             post.AddComment(currentUserId, dto.Text);
+
+            await _uow.SaveChangesAsync();
+        }
+        public async Task<PagedResult<PostResponseDto>>GetPagedAsync(int page,int pageSize,CancellationToken ct)
+        {
+            page = Math.Max(page, 1);
+            pageSize = Math.Clamp(pageSize, 1, 50);
+
+            var skip = (page - 1) * pageSize;
+
+            var result =await _posts.GetPagedAsync(
+                    skip,
+                    pageSize,
+                    ct);
+
+            return new PagedResult<PostResponseDto>
+            {
+                Total = result.total,
+
+                Items = result.items.Select(x =>
+                    new PostResponseDto
+                    {
+                        Id = x.Id,
+                        Caption = x.Caption,
+                        UserId = x.UserId,
+                        CreatedAtUtc = x.CreatedAtUtc
+                    }).ToList()
+            };
+        }
+        public async Task DeleteAsync(Guid currentUserId,Guid postId,CancellationToken ct)
+        {
+            var post =
+                await _posts.GetByIdIncludingDeletedAsync(postId, ct)
+                ?? throw new KeyNotFoundException("Post not found");
+
+            if (post.UserId != currentUserId)
+                throw new UnauthorizedAccessException(
+                    "You do not own this post");
+
+            post.SoftDelete();
 
             await _uow.SaveChangesAsync();
         }

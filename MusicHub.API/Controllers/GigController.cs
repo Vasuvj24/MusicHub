@@ -48,5 +48,29 @@ namespace MusicHub.API.Controllers
             var gigs = await _gigs.GetLatestAsync(take, ct);
             return Ok(gigs); // (later: return DTO, like Posts)
         }
+        [HttpGet("paged")]
+        public async Task<IActionResult>GetPaged([FromQuery] int page = 1,[FromQuery] int pageSize = 20,CancellationToken ct = default)
+        {
+            var result =
+                await _gigs.GetPagedAsync(
+                    page,
+                    pageSize,
+                    ct);
+
+            return Ok(result);
+        }
+        [Authorize]
+        [HttpDelete("{gigId:guid}")]
+        public async Task<IActionResult>Delete(Guid gigId,CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+
+            await _gigs.DeleteAsync(
+                userId,
+                gigId,
+                ct);
+
+            return NoContent();
+        }
     }
 }

@@ -27,6 +27,17 @@ namespace MusicHub.API.Controllers
             var id = await _posts.CreateAsync(userId,dto, ct);
             return Ok(new { postId = id });
         }
+        [HttpGet("paged")]
+        public async Task<IActionResult>GetPaged([FromQuery] int page = 1,[FromQuery] int pageSize = 20,CancellationToken ct = default)
+        {
+            var result =
+                await _posts.GetPagedAsync(
+                    page,
+                    pageSize,
+                    ct);
+
+            return Ok(result);
+        }
         [Authorize]
         [HttpPost("{postId:guid}/like")]
         public async Task<IActionResult> Like(Guid postId, [FromBody] LikePostDto dto, CancellationToken ct)
@@ -57,6 +68,19 @@ namespace MusicHub.API.Controllers
             var userId = User.GetUserId();
             await _admin.ReportPostAsync(userId, postId, dto.Reason, dto.Note, ct);
             return Ok();
+        }
+        [Authorize]
+        [HttpDelete("{postId:guid}")]
+        public async Task<IActionResult>Delete(Guid postId,CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+
+            await _posts.DeleteAsync(
+                userId,
+                postId,
+                ct);
+
+            return NoContent();
         }
     }
 }

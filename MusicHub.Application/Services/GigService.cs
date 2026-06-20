@@ -1,4 +1,5 @@
 ﻿using MusicHub.Application.DTO;
+using MusicHub.Application.DTO.Common;
 using MusicHub.Application.Interfaces;
 using MusicHub.Domain.Entities;
 using System;
@@ -52,6 +53,47 @@ namespace MusicHub.Application.Services
                     IsRead = false,
                     CreatedAtUtc = DateTime.UtcNow
                 });
+            await _uow.SaveChangesAsync();
+        }
+        public async Task<PagedResult<GigResponseDto>>GetPagedAsync(int page,int pageSize,CancellationToken ct)
+        {
+            page = Math.Max(page, 1);
+            pageSize = Math.Clamp(pageSize, 1, 50);
+
+            int skip = (page - 1) * pageSize;
+
+            var result = await _gigs.GetPagedAsync(
+                    skip,
+                    pageSize,
+                    ct);
+
+            return new PagedResult<GigResponseDto>
+            {
+                Total = result.total,
+
+                Items = result.items
+                    .Select(g => new GigResponseDto
+                    {
+                        Id = g.Id,
+                        Title = g.Title,
+                        Description = g.Description,
+                        CreatorId = g.CreatedByUserId,
+                        ScheduledAtUtc = g.ScheduledAtUtc
+                    })
+                    .ToList()
+            };
+        }
+        public async Task DeleteAsync(Guid currentUserId,Guid gigId,CancellationToken ct)
+        {
+            var gig =
+                await _gigs.GetByIdAsync(
+                    gigId,
+                    ct)
+                ?? throw new KeyNotFoundException(
+                    "Gig not found");
+
+            gig.SoftDelete(currentUserId);
+
             await _uow.SaveChangesAsync();
         }
         public async Task ApproveAsync(Guid currentUserId, Guid gigId, ApproveMemberDto dto, CancellationToken ct)

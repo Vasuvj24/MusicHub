@@ -10,8 +10,8 @@ namespace MusicHub.Application.Interfaces
         Task AddAsync(Post post, CancellationToken cts);
         Task<Post?> GetByIdAsync(Guid PostId,CancellationToken cts);
         Task<List<Post>> GetLatestAsync(int take,CancellationToken cts);
-        Task<Post?> GetByIdIncludingDeletedAsync(Guid postId, CancellationToken ct);
-        Task<(int total, List<Post> items)> GetPagedAsync(int skip, int take, CancellationToken ct);
+        Task<(int total, List<Post> items)>GetPagedAsync(int skip,int take,CancellationToken ct);
+        Task<Post?> GetByIdIncludingDeletedAsync(Guid postId,CancellationToken ct);
         Task<List<Post>> SearchPostsAsync(string term);
     }
 }

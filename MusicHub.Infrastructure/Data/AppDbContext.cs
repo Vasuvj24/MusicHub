@@ -68,6 +68,8 @@ namespace MusicHub.Infrastructure.Data
             {
                 //setting primary key
                 g.HasKey(x=> x.Id);
+                //adding permamnenet where clause for isdeleted
+                g.HasQueryFilter(x => !x.IsDeleted);
                 g.Property(x => x.Title).HasMaxLength(200).IsRequired();
                 g.Property(x => x.Description).HasMaxLength(2000);
                 g.OwnsMany(g => g.Members, gig =>
@@ -128,7 +130,13 @@ namespace MusicHub.Infrastructure.Data
             {
                 Console.WriteLine($"{e.Metadata.Name} => {e.State}");
             }
-
+            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            {
+                if (entry.State == EntityState.Modified)
+                {
+                    entry.Entity.MarkUpdated();
+                }
+            }
             var result = await base.SaveChangesAsync(cancellationToken);
             foreach (var entity in domainEntries)
             {

@@ -10,6 +10,9 @@ namespace MusicHub.Domain.Common
     public abstract class BaseEntity
     {
         public Guid Id { get; protected set; } = Guid.NewGuid();
+        public DateTime CreatedAtUtc { get; protected set; }
+
+        public DateTime? UpdatedAtUtc { get; protected set; }
 
         //this is a property that stores the actual data
         private readonly List<IDomainEvent> _domainEvents = new();
@@ -23,6 +26,10 @@ namespace MusicHub.Domain.Common
         public void ClearDomainEvents()
         {
             _domainEvents.Clear();  
+        }
+        public void MarkUpdated()
+        {
+            UpdatedAtUtc = DateTime.UtcNow;
         }
     }
 }

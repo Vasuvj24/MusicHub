@@ -30,6 +30,24 @@ namespace MusicHub.Infrastructure.Repositories
                 .OrderByDescending(x => x.ScheduledAtUtc)
                 .ToListAsync();
         }
+        public async Task<(int total, List<Gig> items)>GetPagedAsync(int skip,int take,CancellationToken ct)
+        {
+            var query =
+                _db.Gigs
+                    .OrderByDescending(
+                        x => x.ScheduledAtUtc);
+
+            var total =
+                await query.CountAsync(ct);
+
+            var items =
+                await query
+                    .Skip(skip)
+                    .Take(take)
+                    .ToListAsync(ct);
+
+            return (total, items);
+        }
         public Task<Gig?> GetByIdAsync(Guid gigId, CancellationToken ct)
         {
             return _db.Gigs.FirstOrDefaultAsync(g => g.Id == gigId, ct);
