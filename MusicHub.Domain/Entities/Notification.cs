@@ -12,8 +12,16 @@ namespace MusicHub.Domain.Entities
 
         public string Message { get; set; } = string.Empty;
 
-        public bool IsRead { get; set; }
+        public bool IsRead { get; private set; } = false;
 
         public DateTime CreatedAtUtc { get; set; }
+        public void MarkRead()
+        {
+            IsRead = true;
+        }
+        public void MarkUnRead()
+        {
+            IsRead = false;
+        }
     }
 }

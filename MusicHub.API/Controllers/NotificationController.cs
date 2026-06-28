@@ -47,7 +47,7 @@ namespace MusicHub.API.Controllers
             });
         }
 
-        [HttpPut("{id}/read")]
+        [HttpPut("{notificationId:guid}/read")]
         public async Task<IActionResult>
             MarkRead(Guid id)
         {

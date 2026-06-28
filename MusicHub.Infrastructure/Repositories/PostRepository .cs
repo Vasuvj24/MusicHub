@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MusicHub.Application.Interfaces;
 using MusicHub.Domain.Entities;
+using MusicHub.Domain.Enums;
 using MusicHub.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -40,12 +41,45 @@ namespace MusicHub.Infrastructure.Repositories
         public Task<Post?> GetByIdIncludingDeletedAsync(Guid postId, CancellationToken ct)
     => _db.Posts.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Id == postId, ct);
 
-        public async Task<(int total, List<Post> items)> GetPagedAsync(int skip, int take, CancellationToken ct)
+        public async Task<(int Total, List<Post> Posts)> GetPagedAsync(
+    int page,
+    int pageSize,
+    InstrumentType? instrument,
+    string sortBy,
+    CancellationToken ct)
         {
-            var query = _db.Posts.OrderByDescending(p => p.CreatedAtUtc);
-            var total = await query.CountAsync(ct);
-            var items = await query.Skip(skip).Take(take).ToListAsync(ct);
-            return (total, items);
+            IQueryable<Post> query =
+                _db.Posts
+                .Include(x => x.Likes)
+                .Include(x => x.Comments);
+
+            if (instrument.HasValue)
+            {
+                query =
+                    query.Where(x =>
+                        x.Instrument == instrument.Value);
+            }
+
+            query =
+                sortBy.ToLower() switch
+                {
+                    "likes" =>
+                        query.OrderByDescending(x => x.Likes.Count),
+
+                    _ =>
+                        query.OrderByDescending(x => x.CreatedAtUtc)
+                };
+
+            var total =
+                await query.CountAsync(ct);
+
+            var posts =
+                await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(ct);
+
+            return (total, posts);
         }
     }
 }

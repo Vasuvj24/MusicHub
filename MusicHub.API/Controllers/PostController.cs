@@ -28,15 +28,27 @@ namespace MusicHub.API.Controllers
             return Ok(new { postId = id });
         }
         [HttpGet("paged")]
-        public async Task<IActionResult>GetPaged([FromQuery] int page = 1,[FromQuery] int pageSize = 20,CancellationToken ct = default)
+        public async Task<IActionResult> GetPaged(
+    [FromQuery] PostQueryDto dto,
+    CancellationToken ct = default)
         {
             var result =
-                await _posts.GetPagedAsync(
-                    page,
-                    pageSize,
-                    ct);
+                await _posts.GetPagedAsync(dto, ct);
 
             return Ok(result);
+        }
+        [Authorize]
+        [HttpDelete("{postId:guid}/like")]
+        public async Task<IActionResult> Unlike(Guid postId,CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+
+            await _posts.UnlikeAsync(
+                userId,
+                postId,
+                ct);
+
+            return NoContent();
         }
         [Authorize]
         [HttpPost("{postId:guid}/like")]
@@ -78,6 +90,47 @@ namespace MusicHub.API.Controllers
             await _posts.DeleteAsync(
                 userId,
                 postId,
+                ct);
+
+            return NoContent();
+        }
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(
+    [FromQuery] string term)
+        {
+            return Ok(
+                await _posts.SearchPostsAsync(term));
+        }
+
+        [HttpGet("{postId:guid}/comments")]
+        public async Task<IActionResult> GetComments(
+    Guid postId,
+    CancellationToken ct)
+        {
+            return Ok(
+                await _posts.GetCommentsAsync(postId, ct));
+        }
+        [HttpGet("{postId:guid}")]
+        public async Task<IActionResult> Get(
+    Guid postId,
+    CancellationToken ct)
+        {
+            return Ok(
+                await _posts.GetByIdAsync(postId, ct));
+        }
+        [Authorize]
+        [HttpDelete("{postId:guid}/comments/{commentId:guid}")]
+        public async Task<IActionResult> DeleteComment(
+    Guid postId,
+    Guid commentId,
+    CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+
+            await _posts.DeleteCommentAsync(
+                userId,
+                postId,
+                commentId,
                 ct);
 
             return NoContent();

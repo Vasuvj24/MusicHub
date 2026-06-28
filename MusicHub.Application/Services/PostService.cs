@@ -7,6 +7,7 @@ using MusicHub.Domain.Users;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace MusicHub.Application.Services
 {
@@ -59,12 +60,89 @@ namespace MusicHub.Application.Services
 
             }
         }
+        public async Task<PostResponseDto> GetByIdAsync(Guid postId,CancellationToken ct)
+        {
+            var post =
+                await _posts.GetByIdAsync(postId, ct)
+                ?? throw new KeyNotFoundException("Post not found.");
+
+            return new PostResponseDto
+            {
+                Id = post.Id,
+                UserId = post.UserId,
+                Caption = post.Caption,
+                Instrument = post.Instrument,
+                MediaUrl = post.MediaUrl,
+                CreatedAtUtc = post.CreatedAtUtc,
+                LikesCount = post.Likes.Count,
+                CommentsCount = post.Comments.Count
+            };
+        }
+        public async Task<List<FeedItemDto>> GetFeedAsync(int take,CancellationToken ct)
+        {
+            var posts =
+                await _posts.GetLatestAsync(
+                    take,
+                    ct);
+
+            return posts.Select(x =>
+                new FeedItemDto
+                {
+                    Id = x.Id,
+                    UserId = x.UserId,
+                    Caption = x.Caption,
+                    MediaUrl = x.MediaUrl,
+                    LikesCount = x.Likes.Count,
+                    CommentsCount = x.Comments.Count,
+                    CreatedAtUtc = x.CreatedAtUtc
+                })
+                .ToList();
+        }
+        public async Task<List<CommentResponseDto>> GetCommentsAsync(Guid postId,CancellationToken ct)
+        {
+            var post =
+                await _posts.GetByIdAsync(
+                    postId,
+                    ct)
+                ?? throw new KeyNotFoundException();
+
+            return post.Comments
+                .Select(x => new CommentResponseDto
+                {
+                    UserId = x.UserId,
+                    Text = x.Text,
+                    CreatedAtUtc = x.CreatedAtUtc
+                })
+                .ToList();
+        }
+        public async Task UnlikeAsync(Guid currentUserId,Guid postId,CancellationToken ct)
+        {
+            var post =
+                await _posts.GetByIdAsync(
+                    postId,
+                    ct)
+                ?? throw new KeyNotFoundException();
+
+            post.Unlike(currentUserId);
+
+            await _uow.SaveChangesAsync();
+        }
         public async Task<Guid> CreateAsync(Guid currentUserId,CreatePostDto dto, CancellationToken ct)
         {
             var post = new Post(currentUserId, dto.Instrument, dto.MediaUrl, dto.Caption ?? "");
             await _posts.AddAsync(post, ct);
             await _uow.SaveChangesAsync(); // your existing UoW
             return post.Id;
+        }
+        public async Task DeleteCommentAsync(Guid currentUserId,Guid postId,Guid commentId,CancellationToken ct)
+        {
+            var post =
+                await _posts.GetByIdAsync(postId, ct)
+                ?? throw new KeyNotFoundException();
+
+            post.DeleteComment(currentUserId, commentId);
+
+            await _uow.SaveChangesAsync();
         }
         public async Task CommentAsync(Guid currentUserId, Guid postId, AddCommentDto dto, CancellationToken ct)
         {
@@ -75,30 +153,44 @@ namespace MusicHub.Application.Services
 
             await _uow.SaveChangesAsync();
         }
-        public async Task<PagedResult<PostResponseDto>>GetPagedAsync(int page,int pageSize,CancellationToken ct)
+        public async Task<PagedResult<PostResponseDto>> GetPagedAsync(
+    PostQueryDto dto,
+    CancellationToken ct)
         {
-            page = Math.Max(page, 1);
-            pageSize = Math.Clamp(pageSize, 1, 50);
+            dto.Page =
+                Math.Max(dto.Page, 1);
 
-            var skip = (page - 1) * pageSize;
+            dto.PageSize =
+                Math.Clamp(dto.PageSize, 1, 50);
 
-            var result =await _posts.GetPagedAsync(
-                    skip,
-                    pageSize,
+            var result =
+                await _posts.GetPagedAsync(
+                    dto.Page,
+                    dto.PageSize,
+                    dto.Instrument,
+                    dto.SortBy,
                     ct);
 
             return new PagedResult<PostResponseDto>
             {
-                Total = result.total,
+                Page = dto.Page,
+                PageSize = dto.PageSize,
+                Total = result.Total,
 
-                Items = result.items.Select(x =>
-                    new PostResponseDto
-                    {
-                        Id = x.Id,
-                        Caption = x.Caption,
-                        UserId = x.UserId,
-                        CreatedAtUtc = x.CreatedAtUtc
-                    }).ToList()
+                Items =
+                    result.Posts.Select(x =>
+                        new PostResponseDto
+                        {
+                            Id = x.Id,
+                            UserId = x.UserId,
+                            Caption = x.Caption,
+                            Instrument = x.Instrument,
+                            MediaUrl = x.MediaUrl,
+                            CreatedAtUtc = x.CreatedAtUtc,
+                            LikesCount = x.Likes.Count,
+                            CommentsCount = x.Comments.Count
+                        })
+                        .ToList()
             };
         }
         public async Task DeleteAsync(Guid currentUserId,Guid postId,CancellationToken ct)

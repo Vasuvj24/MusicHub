@@ -1,5 +1,6 @@
 ﻿using MusicHub.Application.DTO;
 using MusicHub.Application.Interfaces;
+using MusicHub.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -43,7 +44,7 @@ namespace MusicHub.Application.Services
             if (notification == null)
                 throw new Exception("Notification not found");
 
-            notification.IsRead = true;
+            await _repo.MarkAsReadAsync(notification);
 
             await _uow.SaveChangesAsync();
         }

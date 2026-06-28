@@ -17,5 +17,6 @@ namespace MusicHub.Application.Interfaces
 
         Task<int>
             GetUnreadCountAsync(Guid userId);
+        Task MarkAsReadAsync(Notification notification);
     }
 }

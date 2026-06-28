@@ -50,7 +50,7 @@ namespace MusicHub.Application.Services
                     UserId = gig.CreatedByUserId,
                     Message =
                         $"{dto.Instrument} player musician applied to your gig",
-                    IsRead = false,
+                    //IsRead = false,
                     CreatedAtUtc = DateTime.UtcNow
                 });
             await _uow.SaveChangesAsync();
@@ -107,7 +107,7 @@ namespace MusicHub.Application.Services
                 UserId = dto.MemberUserId,
                 Message =
                     $"You were approved for gig '{gig.Title}'",
-                IsRead = false,
+                //IsRead = false,
                 CreatedAtUtc = DateTime.UtcNow
             });
             await _uow.SaveChangesAsync();

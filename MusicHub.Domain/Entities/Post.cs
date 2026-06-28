@@ -45,6 +45,35 @@ namespace MusicHub.Domain.Entities
             Caption = caption?.Trim() ?? string.Empty;
             AddDomainEvent(new PostCreatedEvent(Id, UserId));
         }
+        public void DeleteComment(Guid actorUserId, Guid commentId)
+        {
+            var comment =
+                _comments.FirstOrDefault(x => x.Id == commentId);
+
+            if (comment == null)
+                throw new KeyNotFoundException("Comment not found.");
+
+            if (comment.UserId != actorUserId &&
+                UserId != actorUserId)
+            {
+                throw new UnauthorizedAccessException(
+                    "Not allowed to delete this comment.");
+            }
+
+            _comments.Remove(comment);
+        }
+        public void Unlike(Guid userId)
+        {
+            var like =
+                _likes.SingleOrDefault(
+                    x => x.UserId == userId);
+
+            if (like == null)
+                throw new InvalidOperationException(
+                    "Post not liked");
+
+            _likes.Remove(like);
+        }
         public void Like(Guid userId)
         {
             if (userId == Guid.Empty) throw new ArgumentException("Invalid userId");

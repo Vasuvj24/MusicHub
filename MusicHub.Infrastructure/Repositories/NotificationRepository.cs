@@ -18,7 +18,12 @@ namespace MusicHub.Infrastructure.Repositories
         {
             _context = context;
         }
+        public Task MarkAsReadAsync(Notification notification)
+        {
+            notification.MarkRead();
 
+            return Task.CompletedTask;
+        }
         public async Task AddAsync(Notification notification)
         {
             await _context.Notifications
